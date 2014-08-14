@@ -10,7 +10,7 @@
 #else  // __arm__
 //------------------------------------------------------------------------------
 /** FreeRTOS_ARM version YYYYMMDD */
-#define FREE_RTOS_ARM_VERSION 20130713
+#define FREE_RTOS_ARM_VERSION 20140814
 //------------------------------------------------------------------------------
 #include "utility/FreeRTOS.h"
 #include "utility/task.h"

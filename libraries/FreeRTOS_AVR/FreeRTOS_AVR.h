@@ -24,7 +24,7 @@ extern "C"{
 
 //------------------------------------------------------------------------------
 /** ChibiOS_AVR version YYYYMMDD */
-#define FREE_RTOS_AVR_VERSION 20130713
+#define FREE_RTOS_AVR_VERSION 20140814
 //------------------------------------------------------------------------------
 
 size_t freeHeap();

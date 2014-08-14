@@ -426,7 +426,7 @@ ISR(TIMER0_COMPA_vect, ISR_NAKED)
 ISR(TIMER0_COMPA_vect)
 
 {
-	vTaskIncrementTick();
+	xTaskIncrementTick();
 }
 #endif // portUSE_PREEMPTION
 #else  // WHG
