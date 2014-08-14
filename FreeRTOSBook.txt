@@ -1,0 +1,38 @@
+The folder examples/FreeRTOSBook has sixteen examples.
+
+These examples are described in the book: 
+
+Using The FreeRTOS Real Time Kernel - a Practical Guide 
+
+http://shop.freertos.org/RTOS_primer_books_and_manual_s/1819.htm
+
+The following examples are fully described in the above book.  I have modified
+The examples to run as Arduino sketches.  The original code is here.
+ 
+http://www.freertos.org/Documentation/code/source-code-for-standard-edition-examples.zip
+
+Warning: The interrupt examples use attachInterrupt() to generate interrupts.
+         The pin for interrupt zero must be free for use as an output on AVR.
+
+         On ARM Due you must connect pin 2 to pin 3.
+
+Input characters will stop an example.
+
+Example  1. Creating Tasks
+Example  2. Using the Task Parameter
+Example  3. Experimenting with priorities
+Example  4. Using the Blocked state to create a delay
+Example  5. Converting the example tasks to use vTaskDelayUntil()
+Example  6. Combining blocking and non-blocking tasks
+Example  7. Defining an Idle Task Hook Function
+Example  8. Changing task priorities
+Example  9. Deleting tasks
+Example 10. Blocking When Receiving From a Queue
+Example 11. Blocking When Sending to a Queue / Sending Structures on a Queue
+Example 12. Using a Binary Semaphore to Synchronize a Task with an Interrupt
+Example 13. Using a Counting Semaphore to Synchronize a Task with an Interrupt
+Example 14. Sending and Receiving on a Queue from Within an Interrupt
+Example 15. Rewriting vPrintString() to Use a Semaphore
+Example 16. Re-writing vPrintString() to Use a Gatekeeper Task
+
+
