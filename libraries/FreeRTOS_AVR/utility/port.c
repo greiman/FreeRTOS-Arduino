@@ -115,11 +115,17 @@ extern volatile TCB_t * volatile pxCurrentTCB;
  * The interrupts will have been disabled during the call to portSAVE_CONTEXT()
  * so we need not worry about reading/writing to the stack pointer. 
  */
-
-#define portSAVE_CONTEXT()									\
-	asm volatile (	"push	r0						\n\t"	\
-					"in		r0, __SREG__			\n\t"	\
-					"cli							\n\t"	\
+// Some code from http://sourceforge.net/projects/avrfreertos/
+#if defined(__AVR_ATmega2560__)
+// Mega 2560
+#define portSAVE_CONTEXT()					\
+	asm volatile (	"push	r0		\n\t"	\
+					"in		r0, __SREG__	\n\t"	\
+					"cli							  \n\t"	\
+					"push	r0						\n\t"	\
+					"in		r0, 0x3b			\n\t"	\
+					"push	r0						\n\t"	\
+					"in		r0, 0x3c			\n\t"	\
 					"push	r0						\n\t"	\
 					"push	r1						\n\t"	\
 					"clr	r1						\n\t"	\
@@ -160,19 +166,113 @@ extern volatile TCB_t * volatile pxCurrentTCB;
 					"in		r0, 0x3e				\n\t"	\
 					"st		x+, r0					\n\t"	\
 				);
+#else  // defined(__AVR_ATmega2560__)
+#define portSAVE_CONTEXT()					\
+	asm volatile (	"push	r0		\n\t"	\
+					"in		r0, __SREG__	\n\t"	\
+					"cli							  \n\t"	\
+					"push	r0						\n\t"	\
+					"push	r1						\n\t"	\
+					"clr	r1						\n\t"	\
+					"push	r2						\n\t"	\
+					"push	r3						\n\t"	\
+					"push	r4						\n\t"	\
+					"push	r5						\n\t"	\
+					"push	r6						\n\t"	\
+					"push	r7						\n\t"	\
+					"push	r8						\n\t"	\
+					"push	r9						\n\t"	\
+					"push	r10						\n\t"	\
+					"push	r11						\n\t"	\
+					"push	r12						\n\t"	\
+					"push	r13						\n\t"	\
+					"push	r14						\n\t"	\
+					"push	r15						\n\t"	\
+					"push	r16						\n\t"	\
+					"push	r17						\n\t"	\
+					"push	r18						\n\t"	\
+					"push	r19						\n\t"	\
+					"push	r20						\n\t"	\
+					"push	r21						\n\t"	\
+					"push	r22						\n\t"	\
+					"push	r23						\n\t"	\
+					"push	r24						\n\t"	\
+					"push	r25						\n\t"	\
+					"push	r26						\n\t"	\
+					"push	r27						\n\t"	\
+					"push	r28						\n\t"	\
+					"push	r29						\n\t"	\
+					"push	r30						\n\t"	\
+					"push	r31						\n\t"	\
+					"lds	r26, pxCurrentTCB		\n\t"	\
+					"lds	r27, pxCurrentTCB + 1	\n\t"	\
+					"in		r0, 0x3d				\n\t"	\
+					"st		x+, r0					\n\t"	\
+					"in		r0, 0x3e				\n\t"	\
+					"st		x+, r0					\n\t"	\
+				);
+#endif  // defined(__AVR_ATmega2560__)
 
-/* 
+/*
  * Opposite to portSAVE_CONTEXT().  Interrupts will have been disabled during
- * the context save so we can write to the stack pointer. 
+ * the context save so we can write to the stack pointer.
  */
-
+#if defined(__AVR_ATmega2560__)
+// Mega 2560
 #define portRESTORE_CONTEXT()								\
 	asm volatile (	"lds	r26, pxCurrentTCB		\n\t"	\
 					"lds	r27, pxCurrentTCB + 1	\n\t"	\
-					"ld		r28, x+					\n\t"	\
-					"out	__SP_L__, r28			\n\t"	\
-					"ld		r29, x+					\n\t"	\
-					"out	__SP_H__, r29			\n\t"	\
+					"ld		r28, x+				\n\t"	\
+					"out	__SP_L__, r28 \n\t"	\
+					"ld		r29, x+			  \n\t"	\
+					"out	__SP_H__, r29	\n\t"	\
+					"pop	r31						\n\t"	\
+					"pop	r30						\n\t"	\
+					"pop	r29						\n\t"	\
+					"pop	r28						\n\t"	\
+					"pop	r27						\n\t"	\
+					"pop	r26						\n\t"	\
+					"pop	r25						\n\t"	\
+					"pop	r24						\n\t"	\
+					"pop	r23						\n\t"	\
+					"pop	r22						\n\t"	\
+					"pop	r21						\n\t"	\
+					"pop	r20						\n\t"	\
+					"pop	r19						\n\t"	\
+					"pop	r18						\n\t"	\
+					"pop	r17						\n\t"	\
+					"pop	r16						\n\t"	\
+					"pop	r15						\n\t"	\
+					"pop	r14						\n\t"	\
+					"pop	r13						\n\t"	\
+					"pop	r12						\n\t"	\
+					"pop	r11						\n\t"	\
+					"pop	r10						\n\t"	\
+					"pop	r9						\n\t"	\
+					"pop	r8						\n\t"	\
+					"pop	r7						\n\t"	\
+					"pop	r6						\n\t"	\
+					"pop	r5						\n\t"	\
+					"pop	r4						\n\t"	\
+					"pop	r3						\n\t"	\
+					"pop	r2						\n\t"	\
+					"pop	r1						\n\t"	\
+					"pop	r0						\n\t"	\
+					"out	0x3c, r0				\n\t"	\
+					"pop	r0						\n\t"	\
+					"out	0x3b, r0				\n\t"	\
+					"pop	r0						\n\t"	\
+					"out	__SREG__, r0			\n\t"	\
+					"pop	r0						\n\t"	\
+				);
+#else  // defined(__AVR_ATmega2560__)
+#define portRESTORE_CONTEXT()								\
+	asm volatile (	"lds	r26, pxCurrentTCB		\n\t"	\
+					"lds	r27, pxCurrentTCB + 1	\n\t"	\
+					"ld		r28, x+				\n\t"	\
+					"out	__SP_L__, r28	\n\t"	\
+					"ld		r29, x+				\n\t"	\
+					"out	__SP_H__, r29	\n\t"	\
 					"pop	r31						\n\t"	\
 					"pop	r30						\n\t"	\
 					"pop	r29						\n\t"	\
@@ -208,7 +308,7 @@ extern volatile TCB_t * volatile pxCurrentTCB;
 					"out	__SREG__, r0			\n\t"	\
 					"pop	r0						\n\t"	\
 				);
-
+#endif  // defined(__AVR_ATmega2560__)
 /*-----------------------------------------------------------*/
 
 /*
@@ -220,11 +320,12 @@ static void prvSetupTimerInterrupt( void );
 /* 
  * See header file for description. 
  */
+// Some code from http://sourceforge.net/projects/avrfreertos/ 
 StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
 {
 uint16_t usAddress;
 
-	/* Place a few bytes of known values on the bottom of the stack. 
+	/* Place a few bytes of known values on the bottom of the stack.
 	This is just useful for debugging. */
 
 	*pxTopOfStack = 0x11;
@@ -234,13 +335,13 @@ uint16_t usAddress;
 	*pxTopOfStack = 0x33;
 	pxTopOfStack--;
 
-	/* Simulate how the stack would look after a call to vPortYield() generated by 
+	/* Simulate how the stack would look after a call to vPortYield() generated by
 	the compiler. */
-
-	/*lint -e950 -e611 -e923 Lint doesn't like this much - but nothing I can do about it. */
 
 	/* The start of the task code will be popped off the stack last, so place
 	it on first. */
+
+#if defined(__AVR_ATmega2560__)
 	usAddress = ( uint16_t ) pxCode;
 	*pxTopOfStack = ( StackType_t ) ( usAddress & ( uint16_t ) 0x00ff );
 	pxTopOfStack--;
@@ -249,7 +350,19 @@ uint16_t usAddress;
 	*pxTopOfStack = ( StackType_t ) ( usAddress & ( uint16_t ) 0x00ff );
 	pxTopOfStack--;
 
-	/* Next simulate the stack as if after a call to portSAVE_CONTEXT().  
+	*pxTopOfStack = 0;
+	pxTopOfStack--;
+#else  // defined(__AVR_ATmega2560__)
+	usAddress = ( uint16_t ) pxCode;
+	*pxTopOfStack = ( StackType_t ) ( usAddress & ( uint16_t ) 0x00ff );
+	pxTopOfStack--;
+
+	usAddress >>= 8;
+	*pxTopOfStack = ( StackType_t ) ( usAddress & ( uint16_t ) 0x00ff );
+	pxTopOfStack--;
+#endif  // defined(__AVR_ATmega2560__)
+
+	/* Next simulate the stack as if after a call to portSAVE_CONTEXT().
 	portSAVE_CONTEXT places the flags on the stack immediately after r0
 	to ensure the interrupts get disabled as soon as possible, and so ensuring
 	the stack use is minimal should a context switch interrupt occur. */
@@ -258,6 +371,16 @@ uint16_t usAddress;
 	*pxTopOfStack = portFLAGS_INT_ENABLED;
 	pxTopOfStack--;
 
+#if defined(__AVR_ATmega2560__)
+	/* If we have an ATmega256x, we are also saving the RAMPZ and EIND registers.
+	 * We should default those to 0.
+	 */
+	*pxTopOfStack = ( StackType_t ) 0x00;	/* EIND */
+	pxTopOfStack--;
+	*pxTopOfStack = ( StackType_t ) 0x00;	/* RAMPZ */
+	pxTopOfStack--;
+
+#endif  // defined(__AVR_ATmega2560__)
 
 	/* Now the remaining registers.   The compiler expects R1 to be 0. */
 	*pxTopOfStack = ( StackType_t ) 0x00;	/* R1 */
