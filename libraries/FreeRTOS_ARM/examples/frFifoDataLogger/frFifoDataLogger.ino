@@ -3,6 +3,7 @@
 
 // The FIFO uses two semaphores to synchronize between tasks.
 
+#include <SPI.h>
 #include <FreeRTOS_ARM.h>
 #include <SdFat.h>
 

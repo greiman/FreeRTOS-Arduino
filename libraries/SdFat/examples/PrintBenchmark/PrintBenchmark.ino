@@ -1,8 +1,9 @@
 /*
- * This sketch is a simple Print benchmark.
+ * This program is a simple Print benchmark.
  */
+#include <SPI.h>
 #include <SdFat.h>
-#include <SdFatUtil.h>
+#include <FreeStack.h>
 
 // SD chip select pin
 const uint8_t chipSelect = SS;
@@ -20,7 +21,7 @@ SdFile file;
 ArduinoOutStream cout(Serial);
 //------------------------------------------------------------------------------
 // store error strings in flash to save RAM
-#define error(s) sd.errorHalt_P(PSTR(s))
+#define error(s) sd.errorHalt(F(s))
 //------------------------------------------------------------------------------
 void setup() {
   Serial.begin(9600);
@@ -37,45 +38,59 @@ void loop() {
   while (Serial.read() >= 0) {
   }
   // pstr stores strings in flash to save RAM
-  cout << pstr("Type any character to start\n");
+  cout << F("Type any character to start\n");
   while (Serial.read() <= 0) {
   }
   delay(400);  // catch Due reset problem
 
-  cout << pstr("Free RAM: ") << FreeRam() << endl;
+  cout << F("FreeStack: ") << FreeStack() << endl;
 
   // initialize the SD card at SPI_FULL_SPEED for best performance.
   // try SPI_HALF_SPEED if bus errors occur.
-  if (!sd.begin(chipSelect, SPI_FULL_SPEED)) sd.initErrorHalt();
-
-  cout << pstr("Type is FAT") << int(sd.vol()->fatType()) << endl;
-
-  // open or create file - truncate existing file.
-  if (!file.open("BENCH.TXT", O_CREAT | O_TRUNC | O_RDWR)) {
-    error("open failed");
+  if (!sd.begin(chipSelect, SPI_FULL_SPEED)) {
+    sd.initErrorHalt();
   }
-  cout << pstr("Starting print test.  Please wait.\n\n");
+
+  cout << F("Type is FAT") << int(sd.vol()->fatType()) << endl;
+
+  cout << F("Starting print test.  Please wait.\n\n");
 
   // do write test
-  for (int test = 0; test < 3; test++) {
-
-    switch(test) {
-    case 0:
-      cout << pstr("Test of println(uint16_t)\n");
-      break;
-
-    case 1:
-      cout << pstr("Test of printField(uint16_t, char)\n");
-      break;
-
-    case 2:
-      cout << pstr("Test of println(double)\n");
-      break;
+  for (int test = 0; test < 6; test++) {
+    char fileName[13] = "bench0.txt";
+    fileName[5] = '0' + test;
+    // open or create file - truncate existing file.
+    if (!file.open(fileName, O_CREAT | O_TRUNC | O_RDWR)) {
+      error("open failed");
     }
-    file.truncate(0);
     maxLatency = 0;
     minLatency = 999999;
     totalLatency = 0;
+    switch(test) {
+    case 0:
+      cout << F("Test of println(uint16_t)\n");
+      break;
+
+    case 1:
+      cout << F("Test of printField(uint16_t, char)\n");
+      break;
+
+    case 2:
+      cout << F("Test of println(uint32_t)\n");
+      break;
+
+    case 3:
+      cout << F("Test of printField(uint32_t, char)\n");
+      break;
+    case 4:
+      cout << F("Test of println(float)\n");
+      break;
+
+    case 5:
+      cout << F("Test of printField(float, char)\n");
+      break;
+    }
+
     uint32_t t = millis();
     for (uint16_t i = 0; i < N_PRINT; i++) {
       uint32_t m = micros();
@@ -90,30 +105,43 @@ void loop() {
         break;
 
       case 2:
-        file.println((double)0.01*i);
+        file.println(12345678UL + i);
+        break;
+
+      case 3:
+        file.printField(12345678UL + i, '\n');
+        break;
+
+      case 4:
+        file.println((float)0.01*i);
+        break;
+
+      case 5:
+        file.printField((float)0.01*i, '\n');
         break;
       }
-
-      if (file.writeError) {
+      if (file.getWriteError()) {
         error("write failed");
       }
       m = micros() - m;
-      if (maxLatency < m) maxLatency = m;
-      if (minLatency > m) minLatency = m;
+      if (maxLatency < m) {
+        maxLatency = m;
+      }
+      if (minLatency > m) {
+        minLatency = m;
+      }
       totalLatency += m;
     }
-    file.sync();
+    file.close();
     t = millis() - t;
     double s = file.fileSize();
-    cout << pstr("Time ") << 0.001*t << pstr(" sec\n");
-    cout << pstr("File size ") << 0.001*s << pstr(" KB\n");
-    cout << pstr("Write ") << s/t << pstr(" KB/sec\n");
-    cout << pstr("Maximum latency: ") << maxLatency;
-    cout << pstr(" usec, Minimum Latency: ") << minLatency;
-    cout << pstr(" usec, Avg Latency: ");
-    cout << totalLatency/N_PRINT << pstr(" usec\n\n");
+    cout << F("Time ") << 0.001*t << F(" sec\n");
+    cout << F("File size ") << 0.001*s << F(" KB\n");
+    cout << F("Write ") << s/t << F(" KB/sec\n");
+    cout << F("Maximum latency: ") << maxLatency;
+    cout << F(" usec, Minimum Latency: ") << minLatency;
+    cout << F(" usec, Avg Latency: ");
+    cout << totalLatency/N_PRINT << F(" usec\n\n");
   }
-  file.close();
-  cout << pstr("Done!\n\n");
+  cout << F("Done!\n\n");
 }
-

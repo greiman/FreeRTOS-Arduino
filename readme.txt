@@ -4,10 +4,10 @@ The documentation for FreeRTOS is located here:
 
 http://www.freertos.org/
 
-FreeRTOS is version 8.0.1
+FreeRTOS is version 8.2.3
 
-These libraries were tested with Arduino 1.05 for AVR boards, Arduino 1.5.7
-for Due and the 1.20RC2/1.0.5 version of the Teensy 3 software.
+These libraries were tested with Arduino 1.6.5 for AVR boards, Arduino 1.6.4
+for Due and the 1.26 version of the Teensy 3 software.
 
 To install these libraries and run the FreeRTOS examples, copy the
 included libraries to your libraries folder.

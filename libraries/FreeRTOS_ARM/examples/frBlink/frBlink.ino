@@ -2,9 +2,6 @@
  * Example to demonstrate thread definition, semaphores, and thread sleep.
  */
 #include <FreeRTOS_ARM.h>
-// Redefine AVR Flash string macro as nop for ARM
-#undef F
-#define F(str) str
 
 // The LED is attached to pin 13 on Arduino.
 const uint8_t LED_PIN = 13;
@@ -55,13 +52,13 @@ void setup() {
 
   Serial.begin(9600);
   
-  // initialize fifoData semaphore to no data available
+  // initialize semaphore
   sem = xSemaphoreCreateCounting(1, 0);
 
-  // create sensor task at priority two
+  // create task at priority two
   s1 = xTaskCreate(Thread1, NULL, configMINIMAL_STACK_SIZE, NULL, 2, NULL);
 
-  // create SD write task at priority one
+  // create task at priority one
   s2 = xTaskCreate(Thread2, NULL, configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 
   // check for creation errors
@@ -71,7 +68,7 @@ void setup() {
   }
   // start scheduler
   vTaskStartScheduler();
-  Serial.println(F("Insufficient RAM"));
+  Serial.println("Insufficient RAM");
   while(1);
 }
 //------------------------------------------------------------------------------
