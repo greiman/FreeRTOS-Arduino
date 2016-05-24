@@ -1,0 +1,13 @@
+{
+  "name": "SdFat",
+  "keywords": "sd, card, file, system",
+  "description": "FAT16/FAT32 file system for SD cards",
+  "include": "libraries/SdFat",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/greiman/FreeRTOS-Arduino.git"
+  },
+  "frameworks": "arduino",
+  "platforms": "*"
+}
